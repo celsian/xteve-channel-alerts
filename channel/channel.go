@@ -2,8 +2,11 @@ package channel
 
 import (
 	"bytes"
+	"fmt"
 	"regexp"
 	"slices"
+
+	"github.com/celsian/xteve-channel-alerts/logger"
 )
 
 type Channel struct {
@@ -40,4 +43,8 @@ func CompareChannels(previous []Channel, current []Channel) []Channel {
 	}
 
 	return missing
+}
+
+func (c Channel) Print() {
+	logger.Log(fmt.Sprintf("%s - %s - %s\n", c.Number, c.Title, c.GroupTitle))
 }
