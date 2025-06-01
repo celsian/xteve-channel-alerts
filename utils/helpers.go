@@ -1,10 +1,13 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func HandleErr(err error) {
+func PanicOnErr(err error) {
 	if err != nil {
+		e := fmt.Errorf("%v", err)
 		// TODO: Alert Discord instead of panicing.
-		panic(fmt.Errorf("%s", err))
+		panic(e)
 	}
 }
