@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/celsian/xteve-channel-alerts/channel"
+	"github.com/celsian/xteve-channel-alerts/logger"
 )
 
 type DiscordPayload struct {
@@ -23,11 +24,16 @@ type Embeds struct {
 
 func DiscordAlert(missing []channel.Channel) error {
 
-	fmt.Println("Alerting on missing channels: ", missing)
+	logger.Log("Alerting Discord")
 
 	description := ""
 
 	for _, c := range missing {
+		if len(description) >= 7000 {
+			description += "...\n"
+			description += "**Too many channels to list, check application log**"
+			break
+		}
 		description += fmt.Sprintf("**%s** %s - %s\n", c.Number, c.Title, c.GroupTitle)
 	}
 
