@@ -6,7 +6,6 @@ import (
 	"github.com/celsian/xteve-channel-alerts/alerts"
 	"github.com/celsian/xteve-channel-alerts/channel"
 	"github.com/celsian/xteve-channel-alerts/file"
-	"github.com/celsian/xteve-channel-alerts/logger"
 	"github.com/celsian/xteve-channel-alerts/utils"
 	"github.com/joho/godotenv"
 )
@@ -38,16 +37,16 @@ func main() {
 
 	if missing == nil {
 		// No changes
-		logger.Log("No changes, skipping alert.")
+		utils.Log("No changes, skipping alert.")
 	} else {
-		logger.Log("Found Missing Channels:")
+		utils.Log(fmt.Sprintf("Found %d Missing Channel(s):", len(missing)))
 		for _, c := range missing {
 			c.Print()
 		}
 		// Alert Discord
 		err = alerts.DiscordAlert(missing)
 		if err != nil {
-			logger.Log(fmt.Sprintf("error sending Discord alert: %v", err))
+			utils.Log(fmt.Sprintf("error sending Discord alert: %v", err))
 		}
 	}
 
