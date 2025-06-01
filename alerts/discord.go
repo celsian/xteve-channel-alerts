@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/celsian/xteve-channel-alerts/channel"
-	"github.com/celsian/xteve-channel-alerts/logger"
+	"github.com/celsian/xteve-channel-alerts/utils"
 )
 
 type DiscordPayload struct {
@@ -24,7 +24,7 @@ type Embeds struct {
 
 func DiscordAlert(missing []channel.Channel) error {
 
-	logger.Log("Alerting Discord")
+	utils.Log("Alerting Discord")
 
 	description := ""
 
