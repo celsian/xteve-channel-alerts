@@ -19,7 +19,12 @@ var app = &cli.App{
 			Name:    "App",
 			Aliases: []string{"start", "s"},
 			Usage:   "Start the app",
-			Action:  func(c *cli.Context) (err error) { return root() },
+			Action: func(c *cli.Context) (err error) {
+				logFile := setup()
+				defer logFile.Close()
+
+				return root()
+			},
 		},
 		testEnvironmnet,
 	},
@@ -34,10 +39,6 @@ func Execute() error {
 }
 
 func root() error {
-	// Setup environment and logger, get the file handle
-	logFile := setup()
-	defer logFile.Close()
-
 	// Get current channel list
 	w, err := file.GetCurrentChannelList()
 	if err != nil {

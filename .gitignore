@@ -2,6 +2,12 @@
 file/tmp/*
 log/*
 
+# Docker related
+data/
+data/tmp/
+data/logs/
+unraid/data/
+
 ### Go ###
 # Binaries for programs and plugins
 *.exe

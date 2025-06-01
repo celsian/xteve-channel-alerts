@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  xteve-channel-alerts:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: xteve-channel-alerts
+    environment:
+      - XTEVE_URL=http://your-xteve-server:34400/m3u/xteve.m3u
+      - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your-webhook-id/your-webhook-token
+      - CRON_SCHEDULE=0 4 * * *  # Default: Run daily at 4 AM
+      - TZ=UTC  # Set your timezone here (e.g., America/Los_Angeles)
+    volumes:
+      - ./data/tmp:/app/file/tmp  # Persistent storage for channel files
+      - ./data/logs:/app/log      # Persistent storage for log files
+    restart: always

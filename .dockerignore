@@ -1,0 +1,39 @@
+# Git repository data
+.git/
+.gitignore
+.github/
+
+# Log files
+log/
+*.log
+logs/
+
+# Temporary files
+file/tmp/
+tmp/
+*.tmp
+*.temp
+
+# Documentation
+README.md
+unraid/
+*.md
+LICENSE
+
+# Build artifacts
+xteve-channel-alerts
+bin/
+dist/
+
+# Docker files (no need to include in build context)
+Dockerfile
+docker-compose.yml
+.dockerignore
+build-docker.sh
+
+# Development files
+.env
+.env.example
+.vscode/
+.idea/
+*.test
