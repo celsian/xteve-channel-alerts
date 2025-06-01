@@ -3,10 +3,9 @@ package channel
 import (
 	"bytes"
 	"fmt"
+	"log/slog"
 	"regexp"
 	"slices"
-
-	"github.com/celsian/xteve-channel-alerts/utils"
 )
 
 type Channel struct {
@@ -45,6 +44,10 @@ func CompareChannels(previous []Channel, current []Channel) []Channel {
 	return missing
 }
 
-func (c Channel) Print() {
-	utils.Log(fmt.Sprintf("%s - %s - %s", c.Number, c.Title, c.GroupTitle))
+func (c Channel) Log() {
+	slog.Info(fmt.Sprintf("%s - %s - %s", c.Number, c.Title, c.GroupTitle))
+}
+
+func (c Channel) LogWarning() {
+	slog.Warn(fmt.Sprintf("%s - %s - %s", c.Number, c.Title, c.GroupTitle))
 }
