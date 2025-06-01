@@ -6,46 +6,58 @@ import (
 	"github.com/celsian/xteve-channel-alerts/alerts"
 	"github.com/celsian/xteve-channel-alerts/channel"
 	"github.com/celsian/xteve-channel-alerts/file"
+	"github.com/celsian/xteve-channel-alerts/logger"
 	"github.com/celsian/xteve-channel-alerts/utils"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error loading .env file:", err)
-	}
+	setup()
 
 	// Get current channel list
 	w, err := file.GetCurrentChannelList()
-	utils.HandleErr(err)
+	utils.PanicOnErr(err)
 
 	// Write current channel list to file
 	file.WriteCurrentFile(w)
-	utils.HandleErr(err)
+	utils.PanicOnErr(err)
 
 	// Load current and previous files
 	previous, current, err := file.ReadFiles()
-	utils.HandleErr(err)
+	utils.PanicOnErr(err)
 
 	// Parse both files into Channel structs
 	pCh, err := channel.ParseM3U(previous)
-	utils.HandleErr(err)
+	utils.PanicOnErr(err)
 
 	cCh, err := channel.ParseM3U(current)
-	utils.HandleErr(err)
+	utils.PanicOnErr(err)
 
 	// Find missing channels
 	missing := channel.CompareChannels(pCh, cCh)
 
 	if missing == nil {
 		// No changes
-		fmt.Println("No changes, skipping alert.")
+		logger.Log("No changes, skipping alert.")
 	} else {
+		logger.Log("Found Missing Channels:")
+		for _, c := range missing {
+			c.Print()
+		}
 		// Alert Discord
-		alerts.DiscordAlert(missing)
+		err = alerts.DiscordAlert(missing)
+		if err != nil {
+			logger.Log(fmt.Sprintf("error sending Discord alert: %v", err))
+		}
 	}
 
 	// Cleanup files for next run
 	file.CleanUpFiles()
+}
+
+func setup() {
+	err := godotenv.Load()
+	if err != nil {
+		panic(fmt.Errorf("error loading .env file: %v", err))
+	}
 }
