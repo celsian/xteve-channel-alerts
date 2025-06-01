@@ -3,8 +3,11 @@ package file
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
+
+	"github.com/celsian/xteve-channel-alerts/alerts"
 )
 
 func GetCurrentChannelList() ([]byte, error) {
@@ -45,6 +48,11 @@ func ReadFiles() (previous []byte, current []byte, err error) {
 	if err != nil {
 		// If this is the first run, the previous file won't exist. Return an empty file to allow the app to create it.
 		if os.IsNotExist(err) {
+			slog.Warn("Previous m3u file not found, this is expected on first run.")
+			err = alerts.MissingPreviousM3U()
+			if err != nil {
+				return nil, c, err
+			}
 			return nil, c, nil
 		}
 		return nil, nil, fmt.Errorf("error reading previous file: %v", err)

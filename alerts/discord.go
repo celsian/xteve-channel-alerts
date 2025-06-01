@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 
 	"github.com/celsian/xteve-channel-alerts/channel"
-	"github.com/celsian/xteve-channel-alerts/utils"
 )
 
 type DiscordPayload struct {
@@ -24,7 +24,7 @@ type Embeds struct {
 
 func DiscordAlert(missing []channel.Channel) error {
 
-	utils.Log("Alerting Discord")
+	slog.Info("Alerting Discord")
 
 	description := ""
 
@@ -48,12 +48,7 @@ func DiscordAlert(missing []channel.Channel) error {
 		Embeds:   []Embeds{embed},
 	}
 
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return fmt.Errorf("error marshaling json: %v", err)
-	}
-
-	err = sendAlert(jsonData)
+	err := sendAlert(data)
 	if err != nil {
 		return fmt.Errorf("error sending alert: %v", err)
 	}
@@ -73,12 +68,7 @@ func TestAlert() error {
 		},
 	}
 
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return fmt.Errorf("error marshaling json: %v", err)
-	}
-
-	sendAlert(jsonData)
+	err := sendAlert(data)
 	if err != nil {
 		return fmt.Errorf("error sending test alert: %v", err)
 	}
@@ -86,8 +76,33 @@ func TestAlert() error {
 	return nil
 }
 
-func sendAlert(jsonData []byte) error {
+func MissingPreviousM3U() error {
+	data := DiscordPayload{
+		Username: "xTeVe",
+		Embeds: []Embeds{
+			{
+				Title:       "Missing Previous M3U",
+				Color:       "16776960",
+				Description: "Previous M3U file was not found, this is expected on first run. If this is not your first run, check the application logs.",
+			},
+		},
+	}
+
+	err := sendAlert(data)
+	if err != nil {
+		return fmt.Errorf("error sending missing m3u alert: %v", err)
+	}
+
+	return nil
+}
+
+func sendAlert(data DiscordPayload) error {
 	DISCORD_WEBHOOK_URL := os.Getenv("DISCORD_WEBHOOK_URL")
+
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("error marshaling json: %v", err)
+	}
 
 	resp, err := http.Post(DISCORD_WEBHOOK_URL, "application/json", bytes.NewReader(jsonData))
 	if err != nil {
