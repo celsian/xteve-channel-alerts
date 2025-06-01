@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"slices"
 
-	"github.com/celsian/xteve-channel-alerts/logger"
+	"github.com/celsian/xteve-channel-alerts/utils"
 )
 
 type Channel struct {
@@ -46,5 +46,5 @@ func CompareChannels(previous []Channel, current []Channel) []Channel {
 }
 
 func (c Channel) Print() {
-	logger.Log(fmt.Sprintf("%s - %s - %s\n", c.Number, c.Title, c.GroupTitle))
+	utils.Log(fmt.Sprintf("%s - %s - %s", c.Number, c.Title, c.GroupTitle))
 }
