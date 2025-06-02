@@ -30,7 +30,5 @@ func SetupLogging() *os.File {
 	logger := slog.New(slog.NewTextHandler(multiWriter, nil))
 	slog.SetDefault(logger)
 
-	slog.Info("App starting, Log started")
-
 	return f
 }
