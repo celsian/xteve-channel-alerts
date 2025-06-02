@@ -1,58 +1,29 @@
 <?xml version="1.0"?>
 <Container version="2">
-  <n>xteve-channel-alerts</n>
-  <Repository>celsian/xteve-channel-alerts</Repository>
+  <Name>xTeVe-Channel-Alerts</Name>
+  <Repository>celsian/xteve-channel-alerts:latest</Repository>
   <Registry>https://hub.docker.com/r/celsian/xteve-channel-alerts</Registry>
   <Network>bridge</Network>
-  <MyIP></MyIP>
+  <MyIP/>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/celsian/xteve-channel-alerts/issues</Support>
+  <Support>https://forums.unraid.net/topic/190817-support-xteve-channel-alerts/</Support>
   <Project>https://github.com/celsian/xteve-channel-alerts</Project>
-  <Overview>Monitors your xTeVe playlist each day and notifies a Discord channel if any channels that previously existed have disappeared. The container downloads the latest M3U from xTeVe, compares it with yesterday's copy that is stored on a volume, and sends a rich-embed Discord alert listing the missing channels. Runs automatically on a cron schedule that you control with an environment variable.</Overview>
-  <Category>MediaServer:Other</Category>
-  <WebUI></WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/celsian/xteve-channel-alerts/main/unraid/template/xteve-channel-alerts.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/celsian/xteve-channel-alerts/main/unraid/icons/xteve-channel-alerts.png</Icon>
-  <ExtraParams></ExtraParams>
-  <PostArgs></PostArgs>
-  <CPUset></CPUset>
-  <DateInstalled></DateInstalled>
-  <DonateText>If you appreciate this app, please consider donating to the developer</DonateText>
-  <DonateLink>https://github.com/celsian</DonateLink>
-  <Description>Monitors your xTeVe playlist for missing channels and sends Discord alerts when channels disappear.</Description>
-  <Networking>
-    <Mode>bridge</Mode>
-    <Publish>
-    </Publish>
-  </Networking>
-  <Data>
-    <Volume>
-      <HostDir>/mnt/user/appdata/xteve-channel-alerts/data</HostDir>
-      <ContainerDir>/app/data</ContainerDir>
-      <Mode>rw</Mode>
-    </Volume>
-  </Data>
-  <Environment>
-    <Variable>
-      <n>XTEVE_URL</n>
-      <Value>http://192.168.1.100:34400/m3u/xteve.m3u</Value>
-      <Description>URL to your xTeVe M3U playlist. Change the IP to match your xTeVe server.</Description>
-    </Variable>
-    <Variable>
-      <n>DISCORD_WEBHOOK_URL</n>
-      <Value></Value>
-      <Description>Discord webhook URL where alerts will be sent. Create one in your Discord server's channel settings.</Description>
-    </Variable>
-    <Variable>
-      <n>CRON_SCHEDULE</n>
-      <Value>0 4 * * *</Value>
-      <Description>Cron schedule for when to check for missing channels. Default: daily at 4 AM.</Description>
-    </Variable>
-  </Environment>
-  <Labels/>
-  <Config Name="Data Directory" Target="/app/data" Default="/mnt/user/appdata/xteve-channel-alerts/data" Mode="rw" Description="Storage for M3U files, logs, and other persistent data" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/xteve-channel-alerts/data</Config>
-  <Config Name="xTeVe URL" Target="XTEVE_URL" Default="http://192.168.1.100:34400/m3u/xteve.m3u" Mode="" Description="URL to your xTeVe M3U playlist" Type="Variable" Display="always" Required="true" Mask="false">http://192.168.1.100:34400/m3u/xteve.m3u</Config>
-  <Config Name="Discord Webhook URL" Target="DISCORD_WEBHOOK_URL" Default="" Mode="" Description="Discord webhook URL where alerts will be sent" Type="Variable" Display="always" Required="true" Mask="true"></Config>
-  <Config Name="Cron Schedule" Target="CRON_SCHEDULE" Default="0 4 * * *" Mode="" Description="Cron schedule for when to check for missing channels" Type="Variable" Display="always" Required="false" Mask="false">0 4 * * *</Config>
+  <Overview>Occasionally you may find that a channel you want to watch has disappeared from your xTeVe playlist. With xTeVe-Channel-Alerts, you can stay informed about these changes. When configured to run after your automatic xTeVe update, it compares the current channel list with the previous. If xTeVe-Channel-Alerts detects a missing channel, it sends a detailed rich-embed message to your Discord webhook, keeping you in the loop.</Overview>
+  <Category>Tools:</Category>
+  <WebUI/>
+  <TemplateURL/>
+  <Icon>https://i.imgur.com/sxHKgvi.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled>1748906620</DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="xTeVe URL" Target="XTEVE_URL" Default="" Mode="" Description="http://localhost:34400/m3u/xteve.m3u" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Discord Webhook URL" Target="DISCORD_WEBHOOK_URL" Default="" Mode="" Description="https://discord.com/api/webhooks/webhook_id/token" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Config" Target="/app/data" Default="" Mode="rw" Description="" Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/xteve-channel-alerts/</Config>
+  <Config Name="Cron Schedule" Target="CRON_SCHEDULE" Default="0 4 * * *" Mode="" Description="" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <TailscaleStateDir/>
 </Container>
