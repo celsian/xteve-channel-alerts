@@ -40,25 +40,16 @@ WORKDIR /app
 # Set permissions
 RUN chown -R app:app /app
 
-# Create the cron job file
+# Create the run script
 RUN echo '#!/bin/sh' > /app/run.sh && \
     echo 'cd /app && ./xteve-channel-alerts App' >> /app/run.sh && \
     chmod +x /app/run.sh
 
-# Create a cron.d directory and crontab file
-RUN mkdir -p /etc/cron.d
-RUN echo '# Run xTeVe channel alerts based on CRON_SCHEDULE env var' > /etc/cron.d/xteve-cron && \
-    echo 'SHELL=/bin/sh' >> /etc/cron.d/xteve-cron && \
-    echo 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' >> /etc/cron.d/xteve-cron && \
-    echo '# Empty line is required' >> /etc/cron.d/xteve-cron && \
-    echo '' >> /etc/cron.d/xteve-cron
-
 # Create entrypoint script to set up cron schedule from env var
+# Modified to use crontab directly instead of cron.d directory
 RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'CRON_SCHEDULE=${CRON_SCHEDULE:-"0 4 * * *"}' >> /app/entrypoint.sh && \
-    echo 'echo "$CRON_SCHEDULE /app/run.sh >> /app/log/cron.log 2>&1" > /etc/cron.d/xteve-cron' >> /app/entrypoint.sh && \
-    echo 'echo "" >> /etc/cron.d/xteve-cron' >> /app/entrypoint.sh && \
-    echo 'crontab /etc/cron.d/xteve-cron' >> /app/entrypoint.sh && \
+    echo 'echo "$CRON_SCHEDULE /app/run.sh >> /app/log/cron.log 2>&1" | crontab -' >> /app/entrypoint.sh && \
     echo 'echo "Starting crond with schedule: $CRON_SCHEDULE"' >> /app/entrypoint.sh && \
     echo 'crond -f -l 8' >> /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh
