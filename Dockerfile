@@ -16,7 +16,7 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p file/tmp log
 
-# Build the application
+# Build the application with explicit architecture-agnostic settings
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o xteve-channel-alerts .
 
 # Stage 2: Create the runtime image
