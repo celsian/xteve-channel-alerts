@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Container version="2">
-  <Name>xteve-channel-alerts</Name>
+  <n>xteve-channel-alerts</n>
   <Repository>celsian/xteve-channel-alerts</Repository>
   <Registry>https://hub.docker.com/r/celsian/xteve-channel-alerts</Registry>
   <Network>bridge</Network>
@@ -28,36 +28,30 @@
   </Networking>
   <Data>
     <Volume>
-      <HostDir>/mnt/user/appdata/xteve-channel-alerts/tmp</HostDir>
-      <ContainerDir>/app/file/tmp</ContainerDir>
-      <Mode>rw</Mode>
-    </Volume>
-    <Volume>
-      <HostDir>/mnt/user/appdata/xteve-channel-alerts/logs</HostDir>
-      <ContainerDir>/app/log</ContainerDir>
+      <HostDir>/mnt/user/appdata/xteve-channel-alerts/data</HostDir>
+      <ContainerDir>/app/data</ContainerDir>
       <Mode>rw</Mode>
     </Volume>
   </Data>
   <Environment>
     <Variable>
-      <Name>XTEVE_URL</Name>
+      <n>XTEVE_URL</n>
       <Value>http://192.168.1.100:34400/m3u/xteve.m3u</Value>
       <Description>URL to your xTeVe M3U playlist. Change the IP to match your xTeVe server.</Description>
     </Variable>
     <Variable>
-      <Name>DISCORD_WEBHOOK_URL</Name>
+      <n>DISCORD_WEBHOOK_URL</n>
       <Value></Value>
       <Description>Discord webhook URL where alerts will be sent. Create one in your Discord server's channel settings.</Description>
     </Variable>
     <Variable>
-      <Name>CRON_SCHEDULE</Name>
+      <n>CRON_SCHEDULE</n>
       <Value>0 4 * * *</Value>
       <Description>Cron schedule for when to check for missing channels. Default: daily at 4 AM.</Description>
     </Variable>
   </Environment>
   <Labels/>
-  <Config Name="Channel Files Storage" Target="/app/file/tmp" Default="/mnt/user/appdata/xteve-channel-alerts/tmp" Mode="rw" Description="Storage for current and previous M3U files" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/xteve-channel-alerts/tmp</Config>
-  <Config Name="Logs" Target="/app/log" Default="/mnt/user/appdata/xteve-channel-alerts/logs" Mode="rw" Description="Application and cron logs" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/xteve-channel-alerts/logs</Config>
+  <Config Name="Data Directory" Target="/app/data" Default="/mnt/user/appdata/xteve-channel-alerts/data" Mode="rw" Description="Storage for M3U files, logs, and other persistent data" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/xteve-channel-alerts/data</Config>
   <Config Name="xTeVe URL" Target="XTEVE_URL" Default="http://192.168.1.100:34400/m3u/xteve.m3u" Mode="" Description="URL to your xTeVe M3U playlist" Type="Variable" Display="always" Required="true" Mask="false">http://192.168.1.100:34400/m3u/xteve.m3u</Config>
   <Config Name="Discord Webhook URL" Target="DISCORD_WEBHOOK_URL" Default="" Mode="" Description="Discord webhook URL where alerts will be sent" Type="Variable" Display="always" Required="true" Mask="true"></Config>
   <Config Name="Cron Schedule" Target="CRON_SCHEDULE" Default="0 4 * * *" Mode="" Description="Cron schedule for when to check for missing channels" Type="Variable" Display="always" Required="false" Mask="false">0 4 * * *</Config>

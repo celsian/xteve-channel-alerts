@@ -5,7 +5,8 @@ channels that previously existed have disappeared.
 The container:
 
 * Downloads the latest M3U from xTeVe  
-* Compares it with yesterday’s copy that is stored on a volume  
+* Compares it with yesterday’s copy that is stored on a **single `data/`
+  volume** (separated into `logs/` and `m3us/` sub-directories)  
 * Sends a rich-embed Discord alert listing the missing channels  
 * Runs automatically on a cron schedule that **you control with an
   environment variable** (no editing files in the container).
@@ -19,12 +20,8 @@ automatically pulls the correct build for your hardware:
 
 | Architecture | Typical hardware                        | Docker platform tag |
 |--------------|-----------------------------------------|---------------------|
-| **AMD64**    | Intel & AMD 64-bit CPUs (most servers)  | `linux/amd64`       |
-| **ARM64**    | Apple Silicon (M1/M2/M3) & ARM servers  | `linux/arm64`       |
-
-Unraid (x86-64) hosts will receive the AMD64 image, while ARM-based hosts
-(NVIDIA Jetson, Raspberry Pi 5 64-bit, etc.) will transparently receive the
-ARM64 build—no extra configuration required.
+| **AMD64**    | Intel / AMD 64-bit CPUs (Unraid, servers) | `linux/amd64`       |
+| **ARM64**    | Apple Silicon (M1/M2/M3) & ARM servers   | `linux/arm64`       |
 
 ---
 
@@ -32,75 +29,81 @@ ARM64 build—no extra configuration required.
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `XTEVE_URL` | `http://192.168.1.100:34400/m3u/xteve.m3u` | Public or LAN URL to the M3U produced by xTeVe. |
-| `DISCORD_WEBHOOK_URL` | `https://discord.com/api/webhooks/…` | Discord webhook where alerts will be posted. |
-| `CRON_SCHEDULE` | `0 4 * * *` | Standard cron expression that controls when the check runs. Default: “0 4 * * *” (every day at 04:00). |
+| `XTEVE_URL` | `http://192.168.1.100:34400/m3u/xteve.m3u` | Public or LAN URL produced by xTeVe |
+| `DISCORD_WEBHOOK_URL` | `https://discord.com/api/webhooks/…` | Discord webhook that receives alerts |
+| `CRON_SCHEDULE` | `0 4 * * *` | Cron expression controlling when the check runs |
 
 ---
 
-## 2 • Volume Mappings
+## 2 • Volume Mapping
 
-| Container path | Purpose | Recommended Unraid mapping |
-|----------------|---------|----------------------------|
-| `/app/file/tmp` | Stores the *current* and *previous* M3U files so they persist between runs. | `/mnt/user/appdata/xteve-channel-alerts/tmp` |
-| `/app/log` | Application & cron logs. | `/mnt/user/appdata/xteve-channel-alerts/logs` |
+All persistent data lives in **one host directory** that the container
+organises internally:
 
-Both volumes are small (a few kB) but must be **persistent**.  
-If they are not mapped, the container will treat every run as the “first run”.
+```
+data/
+├── logs/   ──▶  app.log , cron.log
+└── m3us/   ──▶  current.m3u , previous.m3u
+```
+
+| Container path | Contains … | Must persist? | Recommended Unraid path |
+|----------------|------------|---------------|-------------------------|
+| `/app/data`    | `logs/` & `m3us/` sub-directories | **Yes** | `/mnt/user/appdata/xteve-channel-alerts/data` |
+
+If this volume is **not** mapped persistently the container will treat every
+run as the first run and logs will be lost.
 
 ---
 
 ## 3 • Unraid Template Example
 
-Use these values when creating a new container in the *Community Apps* GUI.
-
 | Field | Value |
 |-------|-------|
 | Repository | `celsian/xteve-channel-alerts:latest` |
-| Network Type | `Bridge` (or whatever suits your setup) |
+| Network Type | `Bridge` (or whichever suits your setup) |
 | Console shell command | `/bin/sh` |
-| Env ‑ `XTEVE_URL` | `http://192.168.1.100:34400/m3u/xteve.m3u` |
-| Env ‑ `DISCORD_WEBHOOK_URL` | Your Discord webhook |
-| Env ‑ `CRON_SCHEDULE` | `0 4 * * *` |
-| /app/file/tmp | `/mnt/user/appdata/xteve-channel-alerts/tmp` |
-| /app/log | `/mnt/user/appdata/xteve-channel-alerts/logs` |
+| Env – `XTEVE_URL` | `http://192.168.1.100:34400/m3u/xteve.m3u` |
+| Env – `DISCORD_WEBHOOK_URL` | *your Discord webhook* |
+| Env – `CRON_SCHEDULE` | `0 4 * * *` |
+| `/app/data` | `/mnt/user/appdata/xteve-channel-alerts/data` |
 
-Save, then **start** the container.  
-A first-run message will be sent to Discord letting you know that no
-“previous” M3U existed yet.
+Save, then **start** the container. A first-run message will be sent to
+Discord noting that no previous M3U existed yet.
 
 ---
 
-## 4 • Cron Schedule Configuration
+## 4 • Cron Schedule
 
 `CRON_SCHEDULE` accepts any standard five-field cron expression:
 
-* `*/30 * * * *` → every 30 minutes  
-* `15 2 * * *`  → daily at 02:15  
-* `0 */6 * * *` → every 6 hours  
+| Example | Meaning |
+|---------|---------|
+| `*/30 * * * *` | every 30 minutes |
+| `15 2 * * *` | daily at 02:15 |
+| `0 */6 * * *` | every 6 hours |
 
-The entrypoint script rewrites `/etc/cron.d/xteve-cron` on every start so
-updating the variable and restarting the container is all that’s needed.
+Change the variable and restart the container to apply.
 
 ---
 
 ## 5 • Troubleshooting
 
-| Symptom | Likely Cause / Fix |
+| Symptom | Likely cause / fix |
 |---------|--------------------|
-| **No messages appear in Discord** | • Webhook URL incorrect → regenerate in Discord. <br>• Container has no outbound internet → check network settings / firewall. |
-| **Container log shows “Previous m3u file not found” every run** | Volume `/app/file/tmp` is **not** mapped persistently. Add the volume and keep it mounted. |
-| **Cron appears to do nothing** | • Mis-typed `CRON_SCHEDULE`. Validate with an online cron tester. |
-| **“xTeVe: cannot GET …” errors** | xTeVe URL unreachable from the container. Use IP instead of hostname, or set `Network=Host` in Unraid. |
-| **Discord message truncated** | Discord embeds are limited to ~7 k characters. The app appends “Too many channels to list…”. Check container log for full list. |
+| No Discord messages | Incorrect webhook URL or outbound network blocked |
+| “Previous m3u file not found” every run | `/app/data` not mapped persistently |
+| Cron appears to do nothing | Mis-typed `CRON_SCHEDULE`; validate online |
+| `xTeVe: cannot GET …` errors | xTeVe URL unreachable; use IP or `Network:Host` |
+| Discord message truncated | Discord embeds limit ~7 kB; see full list in `data/logs/app.log` |
 
 ---
 
 ## 6 • Updating & Backup
 
-* Pull a new image in Unraid, stop, then start the container – volumes
-  keep your data.
-* Back up `/mnt/user/appdata/xteve-channel-alerts/` to preserve log history
-  and the previous M3U snapshot.
+* **Update** – pull the new image in Unraid, then restart; `/app/data`
+  retains all state.
+* **Backup** – copy
+  `/mnt/user/appdata/xteve-channel-alerts/data/`  
+  to preserve log history and the previous M3U snapshot.
 
-Happy monitoring! 🎉
+Happy monitoring 🎉

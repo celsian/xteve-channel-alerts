@@ -5,17 +5,20 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"path/filepath"
 )
 
 func SetupLogging() *os.File {
-	// Create log directory if it doesn't exist
-	err := os.MkdirAll("log", 0755)
+	// Create logs directory if it doesn't exist
+	logsDir := "data/logs"
+	err := os.MkdirAll(logsDir, 0755)
 	if err != nil {
-		panic(fmt.Errorf("error creating log directory: %v", err))
+		panic(fmt.Errorf("error creating logs directory: %v", err))
 	}
 
 	// Open the file for writing, create if it doesn't exist
-	f, err := os.OpenFile("log/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	logPath := filepath.Join(logsDir, "app.log")
+	f, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		panic(fmt.Errorf("error opening app.log file: %v", err))
 	}

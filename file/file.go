@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/celsian/xteve-channel-alerts/alerts"
 )
@@ -29,8 +30,18 @@ func GetCurrentChannelList() ([]byte, error) {
 }
 
 func WriteCurrentFile(w []byte) error {
+	// Define the file path
+	filePath := "data/m3us/current.m3u"
+	
+	// Create the directory if it doesn't exist
+	dir := filepath.Dir(filePath)
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		return fmt.Errorf("error creating directory: %v", err)
+	}
+	
 	// Save new list to file
-	err := os.WriteFile("file/tmp/current.m3u", w, 0644)
+	err = os.WriteFile(filePath, w, 0644)
 	if err != nil {
 		return fmt.Errorf("error writing to file: %v", err)
 	}
@@ -39,12 +50,12 @@ func WriteCurrentFile(w []byte) error {
 }
 
 func ReadFiles() (previous []byte, current []byte, err error) {
-	c, err := os.ReadFile("file/tmp/current.m3u")
+	c, err := os.ReadFile("data/m3us/current.m3u")
 	if err != nil {
 		return nil, nil, fmt.Errorf("error reading current file: %v", err)
 	}
 
-	p, err := os.ReadFile("file/tmp/previous.m3u")
+	p, err := os.ReadFile("data/m3us/previous.m3u")
 	if err != nil {
 		// If this is the first run, the previous file won't exist. Return an empty file to allow the app to create it.
 		if os.IsNotExist(err) {
@@ -63,7 +74,7 @@ func ReadFiles() (previous []byte, current []byte, err error) {
 
 func CleanUpFiles() error {
 	// Move current.m3u to previous.m3u
-	err := os.Rename("file/tmp/current.m3u", "file/tmp/previous.m3u")
+	err := os.Rename("data/m3us/current.m3u", "data/m3us/previous.m3u")
 	if err != nil {
 		return fmt.Errorf("error moving file: %v", err)
 	}
