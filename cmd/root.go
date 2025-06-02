@@ -39,6 +39,8 @@ func Execute() error {
 }
 
 func root() error {
+	slog.Info("xTeVe Channel Alerts starting channel check...")
+
 	// Get current channel list
 	w, err := file.GetCurrentChannelList()
 	if err != nil {
