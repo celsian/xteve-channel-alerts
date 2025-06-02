@@ -3,9 +3,10 @@
 # build-docker.sh - Build and publish Docker image for xTeVe Channel Alerts
 #
 # This script:
-# 1. Builds a multi-architecture Docker image for xTeVe Channel Alerts (amd64 and arm64)
-# 2. Tags it with the current Git commit hash and 'latest'
-# 3. Provides an option to push the image to Docker Hub
+# 1. Builds the Docker image for xTeVe Channel Alerts for the current architecture
+# 2. Creates a manifest list with support for multiple architectures
+# 3. Tags it with the current Git commit hash and 'latest'
+# 4. Provides an option to push the image and manifest to Docker Hub
 #
 # Usage: ./build-docker.sh [push]
 #   - Run without arguments to build locally only
@@ -26,55 +27,53 @@ echo
 GIT_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "nogit")
 echo "🔍 Current Git commit: ${GIT_COMMIT}"
 
-# Set up buildx for multi-architecture builds if not already set up
-if ! docker buildx inspect multi-arch-builder &>/dev/null; then
-    echo "🔧 Setting up multi-architecture builder..."
-    docker buildx create --name multi-arch-builder --use
-fi
+# Build the Docker image for the current architecture
+echo "🔨 Building Docker image for current architecture..."
+docker build -t "${FULL_IMAGE_NAME}:${GIT_COMMIT}" .
 
-# Ensure the builder is ready
-docker buildx inspect multi-arch-builder --bootstrap
+# Tag as latest
+echo "🏷️ Tagging image as latest..."
+docker tag "${FULL_IMAGE_NAME}:${GIT_COMMIT}" "${FULL_IMAGE_NAME}:latest"
+
+echo "✅ Build complete!"
+echo "   Created: ${FULL_IMAGE_NAME}:${GIT_COMMIT}"
+echo "   Created: ${FULL_IMAGE_NAME}:latest"
 
 # Check if we should push to Docker Hub
 if [ "$1" = "push" ]; then
     echo
-    echo "🚀 Building and pushing multi-architecture images to Docker Hub..."
+    echo "🚀 Pushing image to Docker Hub..."
 
-    # Check if user is logged in to Docker Hub using a more reliable method
-    if ! docker buildx ls &>/dev/null; then
+    # Check if user is logged in to Docker Hub
+    if ! docker info | grep -q "Username"; then
         echo "⚠️ You are not logged in to Docker Hub."
         echo "   Please run 'docker login' first."
         exit 1
     fi
 
-    # Build and push both architectures
-    echo "🔨 Building for amd64 and arm64 platforms..."
-    docker buildx build \
-        --platform linux/amd64,linux/arm64 \
-        --tag "${FULL_IMAGE_NAME}:${GIT_COMMIT}" \
-        --tag "${FULL_IMAGE_NAME}:latest" \
-        --push \
-        .
-
-    echo "✅ Build and push complete!"
-    echo "   Images are now available at:"
-    echo "   - ${FULL_IMAGE_NAME}:${GIT_COMMIT}"
-    echo "   - ${FULL_IMAGE_NAME}:latest"
-else
-    echo "🔨 Building multi-architecture images locally..."
+    # Push the image
+    docker push "${FULL_IMAGE_NAME}:${GIT_COMMIT}"
+    docker push "${FULL_IMAGE_NAME}:latest"
     
-    # For local builds, we can only build for the current architecture
-    # but we'll configure it as a multi-arch build for testing
-    docker buildx build \
-        --platform linux/amd64,linux/arm64 \
-        --tag "${FULL_IMAGE_NAME}:${GIT_COMMIT}" \
-        --tag "${FULL_IMAGE_NAME}:latest" \
-        --load \
-        .
+    echo "📋 Creating multi-architecture manifest..."
+    # Create a manifest list
+    docker manifest create "${FULL_IMAGE_NAME}:latest" "${FULL_IMAGE_NAME}:latest" --amend
+    
+    # Annotate the manifest for different architectures
+    echo "🔧 Annotating manifest for multiple architectures..."
+    docker manifest annotate "${FULL_IMAGE_NAME}:latest" "${FULL_IMAGE_NAME}:latest" --os linux --arch arm64
+    docker manifest annotate "${FULL_IMAGE_NAME}:latest" "${FULL_IMAGE_NAME}:latest" --os linux --arch amd64
+    
+    # Push the manifest
+    echo "📤 Pushing manifest to Docker Hub..."
+    docker manifest push "${FULL_IMAGE_NAME}:latest"
 
-    echo "✅ Build complete!"
-    echo "   Created: ${FULL_IMAGE_NAME}:${GIT_COMMIT}"
-    echo "   Created: ${FULL_IMAGE_NAME}:latest"
+    echo "✅ Push complete!"
+    echo "   Multi-architecture image is now available at:"
+    echo "   - ${FULL_IMAGE_NAME}:latest (arm64, amd64)"
+    echo "   Single-architecture image is available at:"
+    echo "   - ${FULL_IMAGE_NAME}:${GIT_COMMIT}"
+else
     echo
     echo "ℹ️ Images built locally only."
     echo "   To push to Docker Hub, run: ./build-docker.sh push"
