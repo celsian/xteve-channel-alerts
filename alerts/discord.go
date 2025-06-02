@@ -57,6 +57,8 @@ func DiscordAlert(missing []channel.Channel) error {
 }
 
 func TestAlert() error {
+	slog.Info("Sending test alert to Discord.")
+
 	data := DiscordPayload{
 		Username: "xTeVe",
 		Embeds: []Embeds{
