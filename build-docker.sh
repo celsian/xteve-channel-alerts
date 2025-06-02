@@ -15,7 +15,7 @@
 set -e
 
 # Configuration - Change these variables to match your Docker Hub username
-DOCKER_HUB_USERNAME="yourdockerhubuser"
+DOCKER_HUB_USERNAME="celsian"
 IMAGE_NAME="xteve-channel-alerts"
 FULL_IMAGE_NAME="${DOCKER_HUB_USERNAME}/${IMAGE_NAME}"
 
@@ -42,18 +42,18 @@ echo "   Created: ${FULL_IMAGE_NAME}:latest"
 if [ "$1" = "push" ]; then
     echo
     echo "🚀 Pushing images to Docker Hub..."
-    
+
     # Check if user is logged in to Docker Hub
     if ! docker info | grep -q "Username"; then
         echo "⚠️ You are not logged in to Docker Hub."
         echo "   Please run 'docker login' first."
         exit 1
     fi
-    
+
     # Push both tags
     docker push "${FULL_IMAGE_NAME}:${GIT_COMMIT}"
     docker push "${FULL_IMAGE_NAME}:latest"
-    
+
     echo "✅ Push complete!"
     echo "   Images are now available at:"
     echo "   - ${FULL_IMAGE_NAME}:${GIT_COMMIT}"

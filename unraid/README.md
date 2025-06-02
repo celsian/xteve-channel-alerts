@@ -1,7 +1,7 @@
-# xTeVe Channel Alerts – Unraid Community Apps  
+# xTeVe Channel Alerts – Unraid Community Apps
 
 Monitors your xTeVe playlist each day and notifies a Discord channel if any
-channels that previously existed have disappeared.  
+channels that previously existed have disappeared.
 The container:
 
 * Downloads the latest M3U from xTeVe
@@ -29,7 +29,7 @@ environment variable** (no editing files in the container).
 | `/app/file/tmp` | Stores the *current* and *previous* M3U files so they persist between runs. | `/mnt/user/appdata/xteve-channel-alerts/tmp` |
 | `/app/log` | Application & cron logs. | `/mnt/user/appdata/xteve-channel-alerts/logs` |
 
-Both volumes are small (a few kB) but must be **persistent**.  
+Both volumes are small (a few kB) but must be **persistent**.
 If they are not mapped, the container will treat every run as the “first run”.
 
 ---
@@ -40,7 +40,7 @@ Use these values when creating a new container in the *Community Apps* GUI.
 
 | Field | Value |
 |-------|-------|
-| Repository | `yourdockerhubuser/xteve-channel-alerts:latest` |
+| Repository | `celsian/xteve-channel-alerts:latest` |
 | Network Type | `Bridge` (or whatever suits your setup) |
 | Console shell command | `/bin/sh` |
 | Env ‑ `XTEVE_URL` | `http://192.168.1.100:34400/m3u/xteve.m3u` |
@@ -49,7 +49,7 @@ Use these values when creating a new container in the *Community Apps* GUI.
 | /app/file/tmp | `/mnt/user/appdata/xteve-channel-alerts/tmp` |
 | /app/log | `/mnt/user/appdata/xteve-channel-alerts/logs` |
 
-Save, then **start** the container.   
+Save, then **start** the container.
 A first-run message will be sent to Discord letting you know that no
 “previous” M3U existed yet.
 
@@ -59,9 +59,9 @@ A first-run message will be sent to Discord letting you know that no
 
 `CRON_SCHEDULE` accepts any standard five-field cron expression:
 
-* `*/30 * * * *` → every 30 minutes  
-* `15 2 * * *` → daily at 02:15  
-* `0 */6 * * *` → every 6 hours  
+* `*/30 * * * *` → every 30 minutes
+* `15 2 * * *` → daily at 02:15
+* `0 */6 * * *` → every 6 hours
 
 The entrypoint script rewrites `/etc/cron.d/xteve-cron` on every start so
 updating the variable and restarting the container is all that’s needed.

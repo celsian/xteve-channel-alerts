@@ -1,8 +1,8 @@
 # xTeVe Channel Alerts
 
 `xTeVe-Channel-Alerts` is a small Go service that downloads the latest M3U
-playlist from your xTeVe instance, compares it with the previous day’s list,
-and sends a Discord embed message when channels disappear.  
+playlist from your xTeVe instance, compares it with the previous list
+and sends a Discord embed message when channels disappear.
 Typical use-case: get an early warning that an IPTV provider has silently
 dropped stations so you can act before users complain.
 
@@ -38,8 +38,8 @@ schedule you supply via `CRON_SCHEDULE`.
 docker build -t xteve-channel-alerts:latest .
 
 # (optional) tag & push
-docker tag xteve-channel-alerts:latest yourdockerhubuser/xteve-channel-alerts:latest
-docker push yourdockerhubuser/xteve-channel-alerts:latest
+docker tag xteve-channel-alerts:latest celsian/xteve-channel-alerts:latest
+docker push celsian/xteve-channel-alerts:latest
 ```
 
 A helper script `build-docker.sh` is included to automate version tagging and
@@ -53,7 +53,7 @@ pushing.
 version: '3'
 services:
   xteve-channel-alerts:
-    image: yourdockerhubuser/xteve-channel-alerts:latest
+    image: celsian/xteve-channel-alerts:latest
     container_name: xteve-channel-alerts
     environment:
       XTEVE_URL: http://192.168.1.100:34400/m3u/xteve.m3u
@@ -89,7 +89,7 @@ services:
 ## Cron Job Configuration
 
 The container’s entrypoint rewrites `/etc/cron.d/xteve-cron` on every start
-using the value of `CRON_SCHEDULE`.  
+using the value of `CRON_SCHEDULE`.
 Examples:
 
 | Schedule | Effect |
@@ -107,10 +107,10 @@ Change the variable, restart the container, and the new schedule is active.
 An Unraid template (`unraid/template/xteve-channel-alerts.xml`) is provided so
 you can install the container through **Community Apps** in two clicks.
 
-1. In Community Apps, open “Install from URL” and paste the raw template URL:  
+1. In Community Apps, open “Install from URL” and paste the raw template URL:
    `https://raw.githubusercontent.com/celsian/xteve-channel-alerts/main/unraid/template/xteve-channel-alerts.xml`
 2. Fill out the following fields:
-   * `XTEVE_URL` – your xTeVe playlist link  
+   * `XTEVE_URL` – your xTeVe playlist link
    * `DISCORD_WEBHOOK_URL` – Discord webhook
    * `CRON_SCHEDULE` – when to run (optional)
 3. Map the two paths:
