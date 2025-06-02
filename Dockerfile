@@ -48,6 +48,7 @@ RUN echo '#!/bin/sh' > /app/run.sh && \
 # Create entrypoint script to set up cron schedule from env var
 # Modified to run crond in background and show application logs in foreground
 # Updated to create subdirectories at runtime before accessing files
+# Added initial run of the application at startup
 RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'CRON_SCHEDULE=${CRON_SCHEDULE:-"0 4 * * *"}' >> /app/entrypoint.sh && \
     echo '# Create necessary subdirectories at runtime (after volume mount)' >> /app/entrypoint.sh && \
@@ -55,6 +56,10 @@ RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'chown -R app:app /app/data' >> /app/entrypoint.sh && \
     echo 'echo "Created directory structure in /app/data"' >> /app/entrypoint.sh && \
     echo 'echo "$CRON_SCHEDULE /app/run.sh >> /app/data/logs/cron.log 2>&1" | crontab -' >> /app/entrypoint.sh && \
+    echo '# Run the application immediately at startup' >> /app/entrypoint.sh && \
+    echo 'echo "Running initial channel check at startup..."' >> /app/entrypoint.sh && \
+    echo '/app/run.sh' >> /app/entrypoint.sh && \
+    echo 'echo "Initial check complete, starting scheduled checks..."' >> /app/entrypoint.sh && \
     echo 'echo "Starting crond with schedule: $CRON_SCHEDULE"' >> /app/entrypoint.sh && \
     echo 'crond -l 8' >> /app/entrypoint.sh && \
     echo 'touch /app/data/logs/app.log' >> /app/entrypoint.sh && \
