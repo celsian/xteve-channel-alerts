@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
 
 	"github.com/celsian/xteve-channel-alerts/utils"
@@ -21,9 +20,6 @@ func setup() *os.File {
 
 	// Setup logging as before
 	logFile := utils.SetupLogging()
-	
-	// Log environment variable usage after logging is set up
-	slog.Info("Using environment variables for configuration")
-	
+
 	return logFile
 }
