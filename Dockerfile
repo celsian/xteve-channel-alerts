@@ -70,7 +70,6 @@ USER app
 ENV XTEVE_URL=""
 ENV DISCORD_WEBHOOK_URL=""
 ENV CRON_SCHEDULE="0 4 * * *"
-ENV TZ=UTC
 
 # Create patch for godotenv to not fail if .env file is missing
 RUN echo '# This is a dummy .env file to prevent godotenv from failing' > /app/.env

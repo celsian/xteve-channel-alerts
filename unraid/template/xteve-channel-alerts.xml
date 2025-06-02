@@ -54,11 +54,6 @@
       <Value>0 4 * * *</Value>
       <Description>Cron schedule for when to check for missing channels. Default: daily at 4 AM.</Description>
     </Variable>
-    <Variable>
-      <Name>TZ</Name>
-      <Value>UTC</Value>
-      <Description>Timezone for container. Example: America/Los_Angeles</Description>
-    </Variable>
   </Environment>
   <Labels/>
   <Config Name="Channel Files Storage" Target="/app/file/tmp" Default="/mnt/user/appdata/xteve-channel-alerts/tmp" Mode="rw" Description="Storage for current and previous M3U files" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/xteve-channel-alerts/tmp</Config>
@@ -66,5 +61,4 @@
   <Config Name="xTeVe URL" Target="XTEVE_URL" Default="http://192.168.1.100:34400/m3u/xteve.m3u" Mode="" Description="URL to your xTeVe M3U playlist" Type="Variable" Display="always" Required="true" Mask="false">http://192.168.1.100:34400/m3u/xteve.m3u</Config>
   <Config Name="Discord Webhook URL" Target="DISCORD_WEBHOOK_URL" Default="" Mode="" Description="Discord webhook URL where alerts will be sent" Type="Variable" Display="always" Required="true" Mask="true"></Config>
   <Config Name="Cron Schedule" Target="CRON_SCHEDULE" Default="0 4 * * *" Mode="" Description="Cron schedule for when to check for missing channels" Type="Variable" Display="always" Required="false" Mask="false">0 4 * * *</Config>
-  <Config Name="Timezone" Target="TZ" Default="UTC" Mode="" Description="Timezone for container" Type="Variable" Display="always" Required="false" Mask="false">UTC</Config>
 </Container>

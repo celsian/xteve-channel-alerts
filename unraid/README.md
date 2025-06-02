@@ -18,8 +18,7 @@ environment variable** (no editing files in the container).
 |----------|---------|-------------|
 | `XTEVE_URL` | `http://192.168.1.100:34400/m3u/xteve.m3u` | Public or LAN URL to the M3U produced by xTeVe. |
 | `DISCORD_WEBHOOK_URL` | `https://discord.com/api/webhooks/…` | Discord webhook where alerts will be posted. |
-| `CRON_SCHEDULE` | `0 4 * * *` | **(Optional)** Standard cron expression that controls when the check runs. Default: “0 4 * * *” (every day at 04:00). |
-| `TZ` | `America/Los_Angeles` | **(Optional)** Time-zone of the host; improves log timestamps. |
+| `CRON_SCHEDULE` | `0 4 * * *` | Standard cron expression that controls when the check runs. Default: “0 4 * * *” (every day at 04:00). |
 
 ---
 
@@ -47,7 +46,6 @@ Use these values when creating a new container in the *Community Apps* GUI.
 | Env ‑ `XTEVE_URL` | `http://192.168.1.100:34400/m3u/xteve.m3u` |
 | Env ‑ `DISCORD_WEBHOOK_URL` | Your Discord webhook |
 | Env ‑ `CRON_SCHEDULE` | `0 4 * * *` |
-| Env ‑ `TZ` | (optional) |
 | /app/file/tmp | `/mnt/user/appdata/xteve-channel-alerts/tmp` |
 | /app/log | `/mnt/user/appdata/xteve-channel-alerts/logs` |
 
@@ -76,7 +74,7 @@ updating the variable and restarting the container is all that’s needed.
 |---------|--------------------|
 | **No messages appear in Discord** | • Webhook URL incorrect → regenerate in Discord. <br>• Container has no outbound internet → check network settings / firewall. |
 | **Container log shows “Previous m3u file not found” every run** | Volume `/app/file/tmp` is **not** mapped persistently. Add the volume and keep it mounted. |
-| **Cron appears to do nothing** | • Mis-typed `CRON_SCHEDULE`. Validate with an online cron tester. <br>• Time-zone mismatch → set `TZ` to your region. |
+| **Cron appears to do nothing** | • Mis-typed `CRON_SCHEDULE`. Validate with an online cron tester. |
 | **“xTeVe: cannot GET …” errors** | xTeVe URL unreachable from the container. Use IP instead of hostname, or set `Network=Host` in Unraid. |
 | **Discord message truncated** | Discord embeds are limited to ~7 k characters. The app appends “Too many channels to list…”. Check container log for full list. |
 
@@ -87,6 +85,6 @@ updating the variable and restarting the container is all that’s needed.
 * Pull a new image in Unraid, stop, then start the container – volumes
   keep your data.
 * Back up `/mnt/user/appdata/xteve-channel-alerts/` to preserve log history
-  and previous M3U snapshot.
+  and the previous M3U snapshot.
 
 Happy monitoring! 🎉
