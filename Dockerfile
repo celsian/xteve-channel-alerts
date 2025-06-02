@@ -46,12 +46,15 @@ RUN echo '#!/bin/sh' > /app/run.sh && \
     chmod +x /app/run.sh
 
 # Create entrypoint script to set up cron schedule from env var
-# Modified to use crontab directly instead of cron.d directory
+# Modified to run crond in background and show application logs in foreground
 RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'CRON_SCHEDULE=${CRON_SCHEDULE:-"0 4 * * *"}' >> /app/entrypoint.sh && \
     echo 'echo "$CRON_SCHEDULE /app/run.sh >> /app/log/cron.log 2>&1" | crontab -' >> /app/entrypoint.sh && \
     echo 'echo "Starting crond with schedule: $CRON_SCHEDULE"' >> /app/entrypoint.sh && \
-    echo 'crond -f -l 8' >> /app/entrypoint.sh && \
+    echo 'crond -l 8' >> /app/entrypoint.sh && \
+    echo 'touch /app/log/app.log' >> /app/entrypoint.sh && \
+    echo 'echo "Displaying application logs (app.log):"' >> /app/entrypoint.sh && \
+    echo 'tail -f /app/log/app.log' >> /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh
 
 # Set environment variables
