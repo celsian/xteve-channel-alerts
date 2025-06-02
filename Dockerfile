@@ -56,7 +56,7 @@ RUN echo '# Run xTeVe channel alerts based on CRON_SCHEDULE env var' > /etc/cron
 # Create entrypoint script to set up cron schedule from env var
 RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'CRON_SCHEDULE=${CRON_SCHEDULE:-"0 4 * * *"}' >> /app/entrypoint.sh && \
-    echo 'echo "$CRON_SCHEDULE app /app/run.sh >> /app/log/cron.log 2>&1" > /etc/cron.d/xteve-cron' >> /app/entrypoint.sh && \
+    echo 'echo "$CRON_SCHEDULE /app/run.sh >> /app/log/cron.log 2>&1" > /etc/cron.d/xteve-cron' >> /app/entrypoint.sh && \
     echo 'echo "" >> /etc/cron.d/xteve-cron' >> /app/entrypoint.sh && \
     echo 'crontab /etc/cron.d/xteve-cron' >> /app/entrypoint.sh && \
     echo 'echo "Starting crond with schedule: $CRON_SCHEDULE"' >> /app/entrypoint.sh && \
