@@ -1,10 +1,7 @@
 # xteve-channel-alerts
 
 ### Why?
-Sometimes when you sit down to watch a specific channel you discover it has vanished from your xTeVe playlist.  
-xTeVe refreshes the playlist nightly; **xteve-channel-alerts** runs **after** that update and compares
-today’s channel list to yesterday’s.  
-If any channels disappeared it sends a rich-embed message to a Discord webhook.
+Occasionally you may find that a channel you want to watch has disappeared from your xTeVe playlist. With xTeVe-Channel-Alerts, you can stay informed about these changes. When configured to run after your automatic xTeVe update, it compares the current channel list with the previous. If xTeVe-Channel-Alerts detects a missing channel, it sends a detailed rich-embed message to your Discord webhook, keeping you in the loop.
 
 ---
 
