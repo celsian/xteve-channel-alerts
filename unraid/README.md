@@ -1,14 +1,30 @@
 # xTeVe Channel Alerts – Unraid Community Apps
 
 Monitors your xTeVe playlist each day and notifies a Discord channel if any
-channels that previously existed have disappeared.
+channels that previously existed have disappeared.  
 The container:
 
-* Downloads the latest M3U from xTeVe
-* Compares it with yesterday’s copy that is stored on a volume
-* Sends a rich-embed Discord alert listing the missing channels
+* Downloads the latest M3U from xTeVe  
+* Compares it with yesterday’s copy that is stored on a volume  
+* Sends a rich-embed Discord alert listing the missing channels  
 * Runs automatically on a cron schedule that **you control with an
-environment variable** (no editing files in the container).
+  environment variable** (no editing files in the container).
+
+---
+
+## Multi-Architecture Support ✅
+
+`celsian/xteve-channel-alerts` is published as a **multi-arch image** and
+automatically pulls the correct build for your hardware:
+
+| Architecture | Typical hardware                        | Docker platform tag |
+|--------------|-----------------------------------------|---------------------|
+| **AMD64**    | Intel & AMD 64-bit CPUs (most servers)  | `linux/amd64`       |
+| **ARM64**    | Apple Silicon (M1/M2/M3) & ARM servers  | `linux/arm64`       |
+
+Unraid (x86-64) hosts will receive the AMD64 image, while ARM-based hosts
+(NVIDIA Jetson, Raspberry Pi 5 64-bit, etc.) will transparently receive the
+ARM64 build—no extra configuration required.
 
 ---
 
@@ -29,7 +45,7 @@ environment variable** (no editing files in the container).
 | `/app/file/tmp` | Stores the *current* and *previous* M3U files so they persist between runs. | `/mnt/user/appdata/xteve-channel-alerts/tmp` |
 | `/app/log` | Application & cron logs. | `/mnt/user/appdata/xteve-channel-alerts/logs` |
 
-Both volumes are small (a few kB) but must be **persistent**.
+Both volumes are small (a few kB) but must be **persistent**.  
 If they are not mapped, the container will treat every run as the “first run”.
 
 ---
@@ -49,7 +65,7 @@ Use these values when creating a new container in the *Community Apps* GUI.
 | /app/file/tmp | `/mnt/user/appdata/xteve-channel-alerts/tmp` |
 | /app/log | `/mnt/user/appdata/xteve-channel-alerts/logs` |
 
-Save, then **start** the container.
+Save, then **start** the container.  
 A first-run message will be sent to Discord letting you know that no
 “previous” M3U existed yet.
 
@@ -59,9 +75,9 @@ A first-run message will be sent to Discord letting you know that no
 
 `CRON_SCHEDULE` accepts any standard five-field cron expression:
 
-* `*/30 * * * *` → every 30 minutes
-* `15 2 * * *` → daily at 02:15
-* `0 */6 * * *` → every 6 hours
+* `*/30 * * * *` → every 30 minutes  
+* `15 2 * * *`  → daily at 02:15  
+* `0 */6 * * *` → every 6 hours  
 
 The entrypoint script rewrites `/etc/cron.d/xteve-cron` on every start so
 updating the variable and restarting the container is all that’s needed.
