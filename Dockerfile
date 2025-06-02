@@ -63,9 +63,6 @@ RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'crond -f -l 8' >> /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh
 
-# Switch to non-root user
-USER app
-
 # Set environment variables
 ENV XTEVE_URL=""
 ENV DISCORD_WEBHOOK_URL=""
