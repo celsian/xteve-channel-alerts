@@ -38,3 +38,6 @@ unraid/data/
 # AIR tmp folder
 /tmp/
 coverage.txt
+
+# Mac .DS_Store
+**/.DS_Store
