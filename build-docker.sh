@@ -43,8 +43,8 @@ if [ "$1" = "push" ]; then
     echo
     echo "🚀 Pushing images to Docker Hub..."
 
-    # Check if user is logged in to Docker Hub
-    if ! docker info | grep -q "Username"; then
+    # Check if user is logged in to Docker Hub using a more reliable method
+    if ! docker buildx ls &>/dev/null; then
         echo "⚠️ You are not logged in to Docker Hub."
         echo "   Please run 'docker login' first."
         exit 1
