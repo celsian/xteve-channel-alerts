@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/celsian/xteve-channel-alerts/utils"
+	"github.com/celsian/xteve-channel-alerts/pkg/utils"
 	"github.com/joho/godotenv"
 )
 

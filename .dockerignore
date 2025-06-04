@@ -37,3 +37,4 @@ build-docker.sh
 .vscode/
 .idea/
 *.test
+.docker_local_run_script.sh

@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/celsian/xteve-channel-alerts/alerts"
-	"github.com/celsian/xteve-channel-alerts/channel"
-	"github.com/celsian/xteve-channel-alerts/file"
+	"github.com/celsian/xteve-channel-alerts/pkg/alerts"
+	"github.com/celsian/xteve-channel-alerts/pkg/channel"
+	"github.com/celsian/xteve-channel-alerts/pkg/file"
 	"github.com/urfave/cli"
 )
 
