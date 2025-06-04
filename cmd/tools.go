@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/celsian/xteve-channel-alerts/alerts"
+	"github.com/celsian/xteve-channel-alerts/pkg/alerts"
 	"github.com/urfave/cli"
 )
 

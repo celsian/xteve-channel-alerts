@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/celsian/xteve-channel-alerts/channel"
+	"github.com/celsian/xteve-channel-alerts/pkg/channel"
 )
 
 type DiscordPayload struct {

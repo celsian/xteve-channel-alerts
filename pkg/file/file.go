@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/celsian/xteve-channel-alerts/alerts"
+	"github.com/celsian/xteve-channel-alerts/pkg/alerts"
 )
 
 func GetCurrentChannelList() ([]byte, error) {
@@ -32,14 +32,14 @@ func GetCurrentChannelList() ([]byte, error) {
 func WriteCurrentFile(w []byte) error {
 	// Define the file path
 	filePath := "data/m3us/current.m3u"
-	
+
 	// Create the directory if it doesn't exist
 	dir := filepath.Dir(filePath)
 	err := os.MkdirAll(dir, 0755)
 	if err != nil {
 		return fmt.Errorf("error creating directory: %v", err)
 	}
-	
+
 	// Save new list to file
 	err = os.WriteFile(filePath, w, 0644)
 	if err != nil {
