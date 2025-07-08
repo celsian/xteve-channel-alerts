@@ -14,21 +14,21 @@ type Channel struct {
 	GroupTitle string
 }
 
-func ParseM3U(file []byte) ([]Channel, error) {
+func ParseM3U(file []byte) []Channel {
 	var channels []Channel
 
 	r := regexp.MustCompile(`#EXTINF:[^\n]*tvg-name="([^"]+)"[^\n]*tvg-id="([^"]+)"[^\n]*group-title="([^"]+)"[^\n]*`)
 
-	lines := bytes.Split(file, []byte("\n"))
+	lines := bytes.SplitSeq(file, []byte("\n"))
 
-	for _, line := range lines {
+	for line := range lines {
 		c := r.FindAllStringSubmatch(string(line), -1)
 		if len(c) > 0 {
 			channels = append(channels, Channel{Number: c[0][2], Title: c[0][1], GroupTitle: c[0][3]})
 		}
 	}
 
-	return channels, nil
+	return channels
 }
 
 func CompareChannels(previous []Channel, current []Channel) []Channel {

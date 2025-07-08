@@ -48,27 +48,19 @@ func root() error {
 	}
 
 	// Write current channel list to file
-	file.WriteCurrentFile(w)
-	if err != nil {
+	if err = file.WriteCurrentFile(w); err != nil {
 		return err
 	}
 
 	// Load current and previous files
-	previous, current, err := file.ReadFiles()
+	previousM3U, currentM3U, err := file.ReadFiles()
 	if err != nil {
 		return err
 	}
 
 	// Parse both files into Channel structs
-	pCh, err := channel.ParseM3U(previous)
-	if err != nil {
-		return err
-	}
-
-	cCh, err := channel.ParseM3U(current)
-	if err != nil {
-		return err
-	}
+	pCh := channel.ParseM3U(previousM3U)
+	cCh := channel.ParseM3U(currentM3U)
 
 	// Find missing channels
 	missing := channel.CompareChannels(pCh, cCh)
@@ -89,7 +81,10 @@ func root() error {
 	}
 
 	// Cleanup files for next run
-	file.CleanUpFiles()
+	if err = file.CleanUpFiles(); err != nil {
+		slog.Error(fmt.Sprintf("error cleaning up files: %v", err))
+		return err
+	}
 
 	return nil
 }
