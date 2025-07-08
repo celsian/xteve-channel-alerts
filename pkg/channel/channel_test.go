@@ -169,5 +169,3 @@ func TestChannel_Warn(t *testing.T) {
 		})
 	}
 }
-
-// Test comment
