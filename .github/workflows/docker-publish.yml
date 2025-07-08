@@ -61,6 +61,7 @@ jobs:
 
       # Build and push Docker image with Buildx
       - name: Build and push Docker image
+        id: build_and_push
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -69,4 +70,19 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # Use inline cache so a registry/network hiccup doesn’t fail the job
+          cache-to: type=inline
+
+      # Retry once if the first attempt failed (handles transient 5xx/502 errors)
+      - name: Retry build and push Docker image
+        if: steps.build_and_push.outcome == 'failure'
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          # Use inline cache so a registry/network hiccup doesn’t fail the job
+          cache-to: type=inline
